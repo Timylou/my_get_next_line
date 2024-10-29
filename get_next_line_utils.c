@@ -6,17 +6,20 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 10:04:01 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/10/27 18:07:59 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/10/29 18:55:01 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_free_stash(char **stash)
+char	*ft_free_stash(char **stash, char **buffer, int res)
 {
-	if (*stash)
+	if (*stash && res >= 0)
 		free(*stash);
 	*stash = NULL;
+	if (*buffer && res >= 0)
+		free(*buffer);
+	*buffer = NULL;
 	return (*stash);
 }
 
@@ -26,10 +29,8 @@ char	*ft_strjoin(char const *s1, char const *s2, int res)
 	int		len_s1;
 	int		i;
 
-	if (!s2)
+	if (!s1 || !s2)
 		return (NULL);
-	if (!s1)
-		s1 = malloc(0);
 	len_s1 = 0;
 	while (s1[len_s1])
 		len_s1++;
@@ -39,12 +40,9 @@ char	*ft_strjoin(char const *s1, char const *s2, int res)
 	i = -1;
 	while (++i < len_s1)
 		str[i] = s1[i];
-	i = 0;
-	while (i < res)
-	{
+	i = -1;
+	while (++i < res)
 		str[i + len_s1] = s2[i];
-		i++;
-	}
 	str[len_s1 + res] = 0;
 	return (str);
 }
@@ -52,43 +50,34 @@ char	*ft_strjoin(char const *s1, char const *s2, int res)
 char	*ft_select(const char *str)
 {
 	char	*selected;
+	int		len;
 	int		i;
 
 	i = 0;
-	while (str[i])
-	{
-		if (str[i++] == '\n')
-			break ;
-	}
-	if (!str[i])
-		i--;
-	selected = malloc(sizeof(char) * (i + 1));
+	while (str[i] && str[i] != '\n')
+		i++;
+	len = i + 1;
+	selected = malloc(sizeof(char) * (len + 1));
 	if (!selected)
 		return (NULL);
-	i = -1;
-	while (str[++i])
+	i = 0;
+	while (i < len)
 	{
 		selected[i] = str[i];
-		if (str[i] == '\n')
-		{
-			selected[i + 1] = 0;
-			return (selected);
-		}
+		i++;
 	}
+	selected[len] = 0;
 	return (selected);
 }
 
-char	*ft_strchr(const char *str, int to_find)
+char	*ft_strchr(const char *str)
 {
-	to_find %= 256;
 	while (*str)
 	{
-		if (*str == to_find)
+		if (*str == '\n')
 			return ((char *) str + 1);
 		str++;
 	}
-	if (*str == to_find)
-		return ((char *) str);
 	return (NULL);
 }
 

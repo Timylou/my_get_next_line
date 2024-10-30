@@ -1,43 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 10:03:49 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/10/30 19:05:46 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/10/30 19:17:25 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
-	static char	*stash = NULL;
+	static char	*stash[1024];
 	char		*temp;
-	static char	*buffer = NULL;
+	char		*buffer;
 	int			res;
 
-	res = ft_read(fd, &buffer, &stash);
-	while (res > 0 || stash)
+	res = ft_read(fd, &buffer, &stash[fd]);
+	while (res > 0 || stash[fd])
 	{
-		temp = stash;
-		stash = ft_strjoin(temp, buffer, res);
+		temp = stash[fd];
+		stash[fd] = ft_strjoin(temp, buffer, res);
 		free(temp);
 		free(buffer);
-		if (!stash)
+		if (!stash[fd])
 			return (NULL);
-		if (!ft_strchr(stash) && res > 0)
+		if (!ft_strchr(stash[fd]) && res > 0)
 		{
-			res = ft_read(fd, &buffer, &stash);
+			res = ft_read(fd, &buffer, &stash[fd]);
 			continue ;
 		}
-		temp = ft_select(stash);
-		stash = ft_linedel(stash);
+		temp = ft_select(stash[fd]);
+		stash[fd] = ft_linedel(stash[fd]);
 		return (temp);
 	}
-	ft_free_stash(&stash, &buffer, res);
+	ft_free_stash(&stash[fd], &buffer, res);
 	return (NULL);
 }
 
@@ -75,7 +75,7 @@ int	ft_read(int fd, char **buffer, char **stash)
 	int			res;
 
 	if (fd < 0 || BUFFER_SIZE < 1)
-		return (0);
+		return (-10);
 	*buffer = malloc(sizeof(char) * BUFFER_SIZE);
 	if (!(*buffer))
 		return (0);

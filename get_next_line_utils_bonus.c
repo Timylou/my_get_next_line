@@ -1,19 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 10:04:01 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/10/30 14:52:32 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/10/30 19:17:01 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_free_stash(char **stash, char **buffer, int res)
 {
+	if (res == -10)
+		return (NULL);
 	if (*stash && res >= 0)
 		free(*stash);
 	*stash = NULL;

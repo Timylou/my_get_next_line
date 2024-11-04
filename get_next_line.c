@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 10:03:49 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/10/30 19:05:46 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/11/04 11:46:31 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,25 +72,37 @@ char	*ft_linedel(char *str)
 
 int	ft_read(int fd, char **buffer, char **stash)
 {
-	int			res;
+	int	res;
+
+	res = ft_check(fd, buffer, stash);
+	if (res < 0)
+		return (0);
+	if (!(*stash) && res > 0)
+	{
+		*stash = malloc(sizeof(char));
+		if (!(*stash))
+			return (0);
+		(*stash)[0] = 0;
+	}
+	return (res);
+}
+
+int	ft_check(int fd, char **buffer, char **stash)
+{
+	int	res;
 
 	if (fd < 0 || BUFFER_SIZE < 1)
-		return (0);
+		return (-1);
 	*buffer = malloc(sizeof(char) * BUFFER_SIZE);
 	if (!(*buffer))
-		return (0);
+		return (-1);
 	res = read(fd, *buffer, BUFFER_SIZE);
 	if (res < 0)
 	{
 		if (*stash)
 			free(*stash);
 		*stash = NULL;
-		return (0);
-	}
-	if (!(*stash) && res > 0)
-	{
-		*stash = malloc(sizeof(char));
-		(*stash)[0] = 0;
+		return (-1);
 	}
 	return (res);
 }
